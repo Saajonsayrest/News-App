@@ -13,6 +13,7 @@ import com.example.newsapp.databinding.FragmentArticleNewsBinding
 import com.example.newsapp.main.models.Article
 import com.example.newsapp.main.ui.NewsActivity
 import com.example.newsapp.main.ui.NewsViewModel
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
@@ -55,6 +56,13 @@ class ArticleNewsFragment : Fragment(R.layout.fragment_article_news) {
                 article?.url?.let {
                     Log.d("abcd", it)
                     loadUrl(it)
+                }
+                binding.fab.setOnClickListener {
+                    if (article != null) {
+                        viewModel.saveArticle(article)
+                        Snackbar.make(view, "Article Saved Successfully", Snackbar.LENGTH_SHORT)
+                            .show()
+                    }
                 }
             }
         }

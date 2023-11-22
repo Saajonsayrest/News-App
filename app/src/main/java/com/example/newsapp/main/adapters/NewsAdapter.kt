@@ -13,7 +13,7 @@ import com.example.newsapp.main.models.Article
 
 
 class NewsAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private var articleList = emptyList<Article>()
+     var articleList = emptyList<Article>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return BreakingNewsItemViewHolder(
