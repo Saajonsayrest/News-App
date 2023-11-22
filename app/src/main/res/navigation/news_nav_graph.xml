@@ -32,7 +32,7 @@
     <fragment
         android:id="@+id/articleNewsFragment"
         android:name="com.example.newsapp.main.ui.fragments.ArticleNewsFragment"
-        android:label="ArticleNewsFragment" >
+        android:label="ArticleNewsFragment">
 
     </fragment>
 </navigation>

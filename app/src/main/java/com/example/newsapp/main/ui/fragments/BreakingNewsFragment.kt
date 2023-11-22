@@ -26,25 +26,27 @@ class BreakingNewsFragment : Fragment(R.layout.fragment_breaking_news) {
         // Initialize binding
         binding = FragmentBreakingNewsBinding.bind(view)
         viewModel = (activity as NewsActivity).viewModel
+
+        // Move setupRecyclerView after the binding is initialized
         setupRecyclerView()
-
-        newsAdapter.setOnItemClickListener {
-            val bundle = Bundle().apply {
-                putParcelable("article", it)
-            }
-            findNavController().navigate(
-                R.id.action_breakingNewsFragment_to_articleNewsFragment,
-                bundle
-            )
-        }
-
-
 
         viewModel.breakingNews.observe(viewLifecycleOwner, Observer { response ->
             when (response) {
                 is Resource.Success -> {
                     hideProgressBar()
-                    response.data?.let { newsResponse -> newsAdapter.differ.submitList(newsResponse.articles) }
+                    response.data?.let { newsResponse ->
+                        newsAdapter.setData(newsResponse.articles)
+                        newsAdapter.setOnItemClickListener {
+                            val bundle = Bundle().apply {
+                                putParcelable("article", it)
+                            }
+                            Log.d("testinggg", it.toString())
+                            findNavController().navigate(
+                                R.id.action_breakingNewsFragment_to_articleNewsFragment,
+                                bundle
+                            )
+                        }
+                    }
                 }
 
                 is Resource.Error -> {

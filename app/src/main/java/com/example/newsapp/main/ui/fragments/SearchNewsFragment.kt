@@ -56,7 +56,7 @@ class SearchNewsFragment : Fragment(R.layout.fragment_search_news) {
             when (response) {
                 is Resource.Success -> {
                     hideProgressBar()
-                    response.data?.let { newsResponse -> newsAdapter.differ.submitList(newsResponse.articles) }
+                    response.data?.let { newsResponse -> newsAdapter.setData(newsResponse.articles) }
                 }
 
                 is Resource.Error -> {
