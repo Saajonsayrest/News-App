@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.newsapp.R
 import com.example.newsapp.databinding.FragmentSavedNewsBinding
 import com.example.newsapp.main.adapters.NewsAdapter
+import com.example.newsapp.main.models.Article
 import com.example.newsapp.main.ui.NewsActivity
 import com.example.newsapp.main.ui.NewsViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -19,6 +20,7 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
     private lateinit var binding: FragmentSavedNewsBinding
     lateinit var viewModel: NewsViewModel
     lateinit var newsAdapter: NewsAdapter
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentSavedNewsBinding.bind(view)
@@ -52,6 +54,7 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
                 val position = viewHolder.adapterPosition
                 val article = newsAdapter.articleList[position]
 
+                viewModel.deleteArticle(article)
                 Snackbar.make(view, "Successfully deleted article", Snackbar.LENGTH_SHORT).apply {
                     setAction("Undo") {
                         viewModel.saveArticle(article)
@@ -65,7 +68,7 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved_news) {
         }
 
         viewModel.getSavedNews()
-            .observe(viewLifecycleOwner, Observer { articles -> newsAdapter.setData(articles) })
+            .observe(viewLifecycleOwner) { articles -> newsAdapter.setData(articles) }
     }
 
     private fun setupRecyclerView() {
