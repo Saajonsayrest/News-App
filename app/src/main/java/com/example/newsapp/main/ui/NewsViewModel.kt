@@ -12,26 +12,42 @@ import kotlinx.coroutines.launch
 class NewsViewModel(val newsRepository: NewsRepository) : ViewModel() {
 
     val breakingNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
-    private val breakingNewsPage = 1
+     var breakingNewsPage = 1
+    private var breakingNewsResponse: NewsResponse? = null
+
 
     val searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
-    private val searchNewsPage = 1
+     var searchNewsPage = 1
+    private var searchNewsResponse: NewsResponse? = null
+
 
     init {
         getBreakingNews("in")
     }
 
-    private fun getBreakingNews(countryCode: String) = viewModelScope.launch {
+     fun getBreakingNews(countryCode: String) = viewModelScope.launch {
         breakingNews.postValue(Resource.Loading())
 
         val response = newsRepository.getBreakingNews(countryCode, breakingNewsPage)
 
         breakingNews.postValue(
-            if (response.isSuccessful && response.body() != null) {
-                Resource.Success(response.body()!!)
+            if (response.isSuccessful) {
+                response.body()?.let { resultResponse ->
+                    breakingNewsPage++
+                    if (breakingNewsResponse == null) {
+                        breakingNewsResponse = resultResponse
+                    } else {
+                        val oldArticles = breakingNewsResponse?.articles
+                        val newArticles = resultResponse.articles
+                        oldArticles?.addAll(newArticles)
+                    }
+                    Resource.Success(breakingNewsResponse ?: resultResponse)
+                }
             } else {
-                Resource.Error(response.message() ?: "Unknown error")
+                Resource.Error(response.message())
             }
+
+
         )
     }
 
@@ -39,10 +55,20 @@ class NewsViewModel(val newsRepository: NewsRepository) : ViewModel() {
         searchNews.postValue(Resource.Loading())
         val searchResponse = newsRepository.searchNews(searchQuery, searchNewsPage)
         searchNews.postValue(
-            if (searchResponse.isSuccessful && searchResponse.body() != null) {
-                Resource.Success(searchResponse.body()!!)
+            if (searchResponse.isSuccessful) {
+                searchResponse.body()?.let { resultResponse ->
+                    searchNewsPage++
+                    if (searchNewsResponse == null) {
+                        searchNewsResponse = resultResponse
+                    } else {
+                        val oldArticles = searchNewsResponse?.articles
+                        val newArticles = resultResponse.articles
+                        oldArticles?.addAll(newArticles)
+                    }
+                    Resource.Success(searchNewsResponse ?: resultResponse)
+                }
             } else {
-                Resource.Error(searchResponse.message() ?: "Unknown Error")
+                Resource.Error(searchResponse.message())
             }
         )
     }
